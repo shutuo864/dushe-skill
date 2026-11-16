@@ -1,0 +1,23 @@
+# —— 私人数据，绝不入库 ——
+data/
+references/heart-journey-83days.md
+
+# —— 凭据 ——
+models.json
+.env
+*.key
+*.token
+
+# —— 备份与缓存 ——
+*.bak
+*.bak-*
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+Thumbs.db
+
+# —— 生成产物 ——
+*.png
+!references/*.png
+dushe_*.zip
