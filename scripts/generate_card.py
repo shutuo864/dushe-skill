@@ -233,9 +233,39 @@ _MIDDOT_MAP = str.maketrans({
 })
 
 
+# Emoji / 装饰符号码点区段：CJK 字体（微软雅黑等）普遍不含这些字形，绘制时渲染成方框 ▯。
+# 心情标签常带 🕊️ / 🏥 / 🟢 等前缀，必须在绘制前剔除。
+# 注意 --mood-type 走 MOOD_DOT 查表、不经过本函数，配色联动不受影响。
+_EMOJI_RANGES = (
+    (0x1F000, 0x1FAFF),  # Emoji 主体（表情/手势/动物/食物/旗帜/交通等）
+    (0x2700, 0x27BF),    # Dingbats 装饰符号（✅❌➡ 等，CJK 字体常缺字）
+    (0x2B00, 0x2BFF),    # 杂项符号与箭头（⭐ 等）
+)
+_EMOJI_SINGLE = {0xFE0F, 0x200D}  # 变体选择符 / 零宽连接符（不剔除会留不可见残字符）
+
+
+def _is_emoji_char(ch):
+    cp = ord(ch)
+    return cp in _EMOJI_SINGLE or any(lo <= cp <= hi for lo, hi in _EMOJI_RANGES)
+
+
 def sanitize_text(text):
-    """绘制前文本清洗：中点类字符 → U+2022"""
-    return text.translate(_MIDDOT_MAP) if text else text
+    """绘制前文本清洗：剔除 emoji（防方框 ▯）+ 中点类字符 → U+2022 + 压缩残留半角空格。"""
+    if not text:
+        return text
+    cleaned = "".join(ch for ch in text if not _is_emoji_char(ch))
+    cleaned = cleaned.translate(_MIDDOT_MAP)
+    # emoji 剥离后常留连续半角空格；只压缩半角，不动全角空格 U+3000（菜单行标签对齐依赖它）
+    out, prev_space = [], False
+    for ch in cleaned:
+        if ch in " \t":
+            if prev_space:
+                continue
+            prev_space = True
+        else:
+            prev_space = False
+        out.append(ch)
+    return "".join(out).strip(" \t")
 
 
 def font_supports_text(font, text):
