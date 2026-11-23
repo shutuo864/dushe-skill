@@ -23,6 +23,24 @@
 
 <br>
 
+## 五段连通管道（v2.10.0+）
+
+毒舌熨心不只是「接住情绪」，它还是整条成长链的**情绪数据源**。心情记录之后，可以顺着五段链式管道一路往下走——每段可单独触发，也可串跑（上一段输出即下一段输入）：
+
+| 段 | 技能 | 做什么 | 触发语 |
+|:--|:--|:--|:--|
+| 一 | 拆解大师 | 拆事情结构（解决问题五步法） | 拆一下 |
+| 二 | 破壁 | 拆自己的思维预设（八步流程） | 破壁一下 |
+| 三 | 发芽师 | 跨域联想，长出 3-5 个新认知 + 发展方向 | 发芽一下 |
+| 四 | 拷问官 | 逻辑审查，挑刺筛掉不扎实的方向 | 拷问一下 |
+| 五 | 个人决策 Agent | 决策台账与复盘（目标函数 / 硬约束 / 复盘点） | 这事该不该做 |
+
+一句话串跑：**「把最近的心情从拆解到决策跑一遍」**。
+
+**下游可用性**：管道一 / 二 / 五的技能已上架 SkillHub，未装时会给出精确安装命令（需带原作者 namespace `user_429c9fdc`）；管道三 / 四所属的「李工大脑」尚未上架，此时毒舌熨心会**内置简版发芽 / 拷问降级**并如实标注，不装也能跑通全程。详见 `SKILL.md`「联动接口」节。
+
+<br>
+
 ## 快速开始
 
 ### 方式一：WorkBuddy 技能目录
@@ -41,7 +59,15 @@ cp -r dushe-skill/. ~/.workbuddy/skills/dushe/
 
 ### 方式二：SkillHub
 
-在 SkillHub 搜索「毒舌熨心」安装。
+在 SkillHub 搜索「毒舌熨心」安装（命令：`skillhub install dushe --namespace user_429c9fdc`）。
+
+五段管道的下游技能（可选，按需安装）：
+
+```bash
+skillhub install chajjie-dashi --namespace user_429c9fdc   # 拆解大师
+skillhub install pobi --namespace user_429c9fdc            # 破壁
+skillhub install siwei-gongjuku --namespace user_429c9fdc  # 个人决策 Agent
+```
 
 <br>
 
@@ -59,13 +85,15 @@ dushe/
 │   ├── agnes-jinju-prompt.md         # Agnes 生图提示词 6 槽位规范
 │   ├── automation-prompts.md         # 周/月/年复盘自动化 prompt
 │   ├── 心路模板.md                    # 个人心路素材库模板
+│   ├── my-journey-template.md         # 个人历程复盘模板
 │   └── 快速参考示例.md                # 精简输出示例
 └── scripts/
-    ├── generate_card.py              # 金句卡（Pillow）
+    ├── generate_card.py              # 金句卡（Pillow，含 emoji 自动剔除）
     ├── generate_overview.py          # 心情速览卡（Pillow，1360×860）
     ├── card_common.py                # 配色与心情色标单一真源
     ├── agnes_jinju.py                # Agnes 零文字底图 + 本地叠真字链路
-    └── build_month_notes.py          # 月度分卷生成
+    ├── build_month_notes.py          # 月度分卷生成
+    └── ima_cos_upload.py             # ima 云Storage图片上传（可选）
 ```
 
 <br>
@@ -110,11 +138,14 @@ pip install pillow requests
 
 ## 版本
 
-当前 **v2.9.2**（2026-11-16）。变更见 [CHANGELOG.md](CHANGELOG.md)。
+当前 **v2.12.1**（2026-11-23）。变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 近期重点：
-- v2.9.2 — 发布副本隐私加固：真实笔记 ID 泛化为占位符，弹药库示例化脱敏（功能零变更）
-- v2.9.x — 金句卡改为每日必出，接 Agnes 生图（零文字底图 + 本地叠真字），提示词随当天心情与金句动态重拼
+- v2.12.1 — 修复卡片 emoji 豆腐块（文本清洗剔除 emoji 码点，金句卡 / 速览卡同受益）
+- v2.12.0 — 接入李工大脑「拷问官」，连通管道扩为五段
+- v2.11.0 — 下游可用性检查：已上架技能给精确安装命令，未上架的发芽 / 拷问走内置降级
+- v2.10.0 — 重建五技能连通管道（拆解 → 破壁 → 发芽 → 拷问 → 决策）
+- v2.9.x — 发布副本隐私加固；金句卡改为每日必出，接 Agnes 生图
 - v2.8.x — 卡片配色收口为单一真源；速览卡改为 PNG
 
 <br>
